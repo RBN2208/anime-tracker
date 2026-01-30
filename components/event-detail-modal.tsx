@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, ExternalLink, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/date-utils";
+import Link from "next/link";
 
 interface EventDetailModalProps {
   event: CalendarEvent | null;
@@ -32,11 +33,7 @@ export function EventDetailModal({
   const eventDate = typeof event.date === "string" ? new Date(event.date) : event.date;
   const formattedDate = formatDate(eventDate);
 
-  const handleOpenSource = () => {
-    if (event.sourceUrl) {
-      window.open(event.sourceUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
+  const transformedLink = event.sourceUrl ? event.sourceUrl.slice(0, -1) + event.episodeNumber : ""
 
   const handleDelete = () => {
     if (onDelete && event.animeId) {
@@ -127,21 +124,15 @@ export function EventDetailModal({
           <div className="flex-1" />
           {event.sourceUrl && (
             <Button
-              variant="default"
-              onClick={handleOpenSource}
+              asChild
               className="w-full sm:w-auto"
             >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Quelle öffnen
+              <Link href={transformedLink} target="_blank">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Quelle öffnen
+              </Link>
             </Button>
           )}
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="w-full sm:w-auto"
-          >
-            Schließen
-          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
