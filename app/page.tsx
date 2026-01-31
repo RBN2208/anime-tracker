@@ -102,6 +102,16 @@ export default function Home() {
     setIsEventModalOpen(true);
   };
 
+  const handleUpdateWatched = (animeId: string, episodeKey: string, watched: boolean) => {
+    const anime = animes.find(a => a.id === animeId);
+    if (!anime) return;
+
+    const watchedEpisodes = { ...(anime.watchedEpisodes || {}) };
+    watchedEpisodes[episodeKey] = watched;
+
+    handleUpdateAnime(animeId, { watchedEpisodes });
+  };
+
   return (
     <main className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
@@ -146,6 +156,8 @@ export default function Home() {
           open={isEventModalOpen}
           onOpenChange={setIsEventModalOpen}
           onDelete={handleDeleteAnime}
+          onUpdateWatched={handleUpdateWatched}
+          anime={selectedEvent ? animes.find(a => a.id === selectedEvent.animeId) : null}
         />
         <Toaster />
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarEvent } from "@/types";
+import { CalendarEvent, Anime } from "@/types";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +14,16 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, ExternalLink, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/date-utils";
 import Link from "next/link";
+import {Label} from "@/components/ui/label";
+import {Checkbox} from "@/components/ui/checkbox";
 
 interface EventDetailModalProps {
   event: CalendarEvent | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDelete?: (animeId: string) => void;
+  onUpdateWatched?: (animeId: string, episodeKey: string, watched: boolean) => void;
+  anime?: Anime | null;
 }
 
 export function EventDetailModal({
@@ -27,6 +31,8 @@ export function EventDetailModal({
   open,
   onOpenChange,
   onDelete,
+  onUpdateWatched,
+  anime,
 }: EventDetailModalProps) {
   if (!event) return null;
 
@@ -39,6 +45,14 @@ export function EventDetailModal({
     if (onDelete && event.animeId) {
       onDelete(event.animeId);
       onOpenChange(false);
+    }
+  };
+
+  const episodeKey = `S${String(event.season).padStart(2, '0')}E${String(event.episodeNumber).padStart(2, '0')}`;
+
+  const handleWatchedChange = (checked: boolean | "indeterminate") => {
+    if (onUpdateWatched && event.animeId && typeof checked === "boolean") {
+      onUpdateWatched(event.animeId, episodeKey, checked);
     }
   };
 
@@ -110,6 +124,21 @@ export function EventDetailModal({
               {String(event.episodeNumber).padStart(2, "0")}
             </p>
           </div>
+        </div>
+
+        {/* Watched Status */}
+        <div className="flex items-center space-x-2">
+          <Checkbox
+              id="watched"
+              checked={anime?.watchedEpisodes?.[episodeKey] ?? false}
+              onCheckedChange={handleWatchedChange}
+          />
+          <Label
+              htmlFor="watched"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+          >
+            Als angesehen markieren
+          </Label>
         </div>
 
         <DialogFooter className="flex-row flex-wrap sm:flex-row gap-2">

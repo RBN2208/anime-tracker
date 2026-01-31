@@ -55,6 +55,7 @@ export function generateEvents(options: GenerateEventsOptions): CalendarEvent[] 
         break;
       }
 
+      const episodeKey = `S${String(anime.season).padStart(2, '0')}E${String(episodeNumber).padStart(2, '0')}`;
       const event: CalendarEvent = {
         id: `${anime.id}-ep${episodeNumber}-${formatDate(currentDate)}`,
         animeId: anime.id,
@@ -63,6 +64,7 @@ export function generateEvents(options: GenerateEventsOptions): CalendarEvent[] 
         season: anime.season,
         title: anime.title,
         sourceUrl: anime.sourceUrl,
+        watched: anime.watchedEpisodes?.[episodeKey] ?? false,
       };
 
       events.push(event);

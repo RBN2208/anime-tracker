@@ -8,6 +8,7 @@ export interface Anime {
   releaseInterval: number;       // Tage zwischen Episoden (Default: 7)
   startDate: Date | string;      // Erstes Release-Datum
   createdAt: Date | string;      // Timestamp der Erstellung
+  watchedEpisodes?: Record<string, boolean>; // Watched Status pro Episode (key: "S01E01")
 }
 
 export interface CalendarEvent {
@@ -18,4 +19,5 @@ export interface CalendarEvent {
   season: number;               // Staffel
   title?: string;               // Anime-Titel
   sourceUrl?: string;           // URL zur Quelle
+  watched?: boolean;            // Watched Status vom Anime
 }

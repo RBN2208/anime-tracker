@@ -11,25 +11,12 @@ interface CalendarDayProps {
   onEventClick?: (event: CalendarEvent) => void;
 }
 
-// Generate consistent color for each anime based on ID
-function getAnimeColor(animeId: string): string {
-  const colors = [
-    'bg-blue-500/20 border-blue-500/40 text-blue-700 dark:text-blue-300',
-    'bg-purple-500/20 border-purple-500/40 text-purple-700 dark:text-purple-300',
-    'bg-green-500/20 border-green-500/40 text-green-700 dark:text-green-300',
-    'bg-orange-500/20 border-orange-500/40 text-orange-700 dark:text-orange-300',
-    'bg-pink-500/20 border-pink-500/40 text-pink-700 dark:text-pink-300',
-    'bg-cyan-500/20 border-cyan-500/40 text-cyan-700 dark:text-cyan-300',
-    'bg-red-500/20 border-red-500/40 text-red-700 dark:text-red-300',
-    'bg-yellow-500/20 border-yellow-500/40 text-yellow-700 dark:text-yellow-300',
-  ];
-  
-  // Simple hash function to get consistent color
-  let hash = 0;
-  for (let i = 0; i < animeId.length; i++) {
-    hash = animeId.charCodeAt(i) + ((hash << 5) - hash);
+// Generate consistent color for each anime based on watched status
+function getAnimeColor(watched?: boolean): string {
+  if (watched) {
+    return 'bg-green-500/20 border-green-500/40 text-green-700 dark:text-green-300';
   }
-  return colors[Math.abs(hash) % colors.length];
+  return 'bg-gray-500/20 border-gray-500/40 text-gray-700 dark:text-gray-300';
 }
 
 export const CalendarDay = React.memo(function CalendarDay({
@@ -80,7 +67,7 @@ export const CalendarDay = React.memo(function CalendarDay({
               'text-xs p-1.5 rounded border cursor-pointer transition-all duration-200',
               'hover:scale-105 hover:shadow-md',
               'animate-in fade-in slide-in-from-left-2',
-              getAnimeColor(event.animeId),
+              getAnimeColor(event.watched),
               isPast && 'opacity-60'
             )}
             style={{ animationDelay: `${index * 50}ms` }}
