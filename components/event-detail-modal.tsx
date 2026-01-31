@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Calendar, ExternalLink, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/date-utils";
 import Link from "next/link";
@@ -20,6 +22,7 @@ interface EventDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDelete?: (animeId: string) => void;
+  onWatchedChange?: (eventId: string, watched: boolean) => void;
 }
 
 export function EventDetailModal({
@@ -27,6 +30,7 @@ export function EventDetailModal({
   open,
   onOpenChange,
   onDelete,
+  onWatchedChange,
 }: EventDetailModalProps) {
   if (!event) return null;
 
@@ -39,6 +43,12 @@ export function EventDetailModal({
     if (onDelete && event.animeId) {
       onDelete(event.animeId);
       onOpenChange(false);
+    }
+  };
+
+  const handleWatchedChange = (checked: boolean | 'indeterminate') => {
+    if (onWatchedChange && event.id && typeof checked === 'boolean') {
+      onWatchedChange(event.id, checked);
     }
   };
 
@@ -109,6 +119,21 @@ export function EventDetailModal({
               S{String(event.season).padStart(2, "0")}E
               {String(event.episodeNumber).padStart(2, "0")}
             </p>
+          </div>
+
+          {/* Watched Status */}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="watched"
+              defaultChecked={event.watched || false}
+              onCheckedChange={handleWatchedChange}
+            />
+            <Label
+              htmlFor="watched"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+            >
+              Als angesehen markieren
+            </Label>
           </div>
         </div>
 

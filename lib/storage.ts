@@ -7,6 +7,7 @@ const SCHEMA_VERSION = '1.0.0';
 interface StorageData {
   version: string;
   animes: Anime[];
+  watchedEvents?: Record<string, boolean>;
   lastUpdated?: string;
 }
 
@@ -179,6 +180,51 @@ export function saveAllAnimes(animes: Anime[]): void {
     saveAnimes(validated);
   } catch (error) {
     console.error('Failed to save animes:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get watched status for all events
+ */
+export function getWatchedEvents(): Record<string, boolean> {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) return {};
+
+    const parsed: StorageData = JSON.parse(data);
+    return parsed.watchedEvents || {};
+  } catch (error) {
+    console.warn('Failed to load watched events:', error);
+    return {};
+  }
+}
+
+/**
+ * Set watched status for an event
+ */
+export function setEventWatched(eventId: string, watched: boolean): void {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) {
+      initializeStorage();
+      return;
+    }
+
+    const parsed: StorageData = JSON.parse(data);
+    const watchedEvents = parsed.watchedEvents || {};
+
+    if (watched) {
+      watchedEvents[eventId] = true;
+    } else {
+      delete watchedEvents[eventId];
+    }
+
+    parsed.watchedEvents = watchedEvents;
+    parsed.lastUpdated = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+  } catch (error) {
+    console.error('Failed to set watched status:', error);
     throw error;
   }
 }
