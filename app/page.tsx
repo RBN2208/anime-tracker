@@ -6,14 +6,13 @@ import { AddAnimeModal } from '@/components/add-anime-modal';
 import { EventDetailModal } from '@/components/event-detail-modal';
 import { Toaster } from '@/components/ui/toaster';
 import { Anime, CalendarEvent } from '@/types';
-import { getAnimes, saveAllAnimes, updateAnime, deleteAnime, initializeStorage, getWatchedEvents, setEventWatched } from '@/lib/storage';
+import { getAnimes, saveAllAnimes, updateAnime, deleteAnime, initializeStorage } from '@/lib/storage';
 import { getAllEvents } from '@/lib/event-generator';
 import { generateId } from '@/lib/date-utils';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Home() {
   const [animes, setAnimes] = useState<Anime[]>([]);
-  const [watchedEvents, setWatchedEvents] = useState<Record<string, boolean>>({});
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +23,6 @@ export default function Home() {
     setIsLoading(true);
     initializeStorage();
     setAnimes(getAnimes());
-    setWatchedEvents(getWatchedEvents());
     setIsLoading(false);
   }, []);
 
@@ -50,13 +48,8 @@ export default function Home() {
     if (animes.length === 0) {
       return [];
     }
-    const generatedEvents = getAllEvents(animes);
-    // Add watched status to events
-    return generatedEvents.map(event => ({
-      ...event,
-      watched: watchedEvents[event.id] || false
-    }));
-  }, [animes, watchedEvents]);
+    return getAllEvents(animes);
+  }, [animes]);
 
   const handleAddAnime = (animeData: Omit<Anime, 'id' | 'createdAt'>) => {
     const newAnime: Anime = {
@@ -109,31 +102,6 @@ export default function Home() {
     setIsEventModalOpen(true);
   };
 
-  const handleWatchedChange = (eventId: string, watched: boolean) => {
-    try {
-      setEventWatched(eventId, watched);
-      setWatchedEvents(prev => {
-        const updated = { ...prev };
-        if (watched) {
-          updated[eventId] = true;
-        } else {
-          delete updated[eventId];
-        }
-        return updated;
-      });
-      toast({
-        title: watched ? 'Als angesehen markiert' : 'Angesehen-Status entfernt',
-        description: 'Status wurde erfolgreich aktualisiert',
-      });
-    } catch (error) {
-      toast({
-        title: 'Fehler',
-        description: 'Status konnte nicht aktualisiert werden',
-        variant: 'destructive',
-      });
-    }
-  };
-
   return (
     <main className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
@@ -178,7 +146,6 @@ export default function Home() {
           open={isEventModalOpen}
           onOpenChange={setIsEventModalOpen}
           onDelete={handleDeleteAnime}
-          onWatchedChange={handleWatchedChange}
         />
         <Toaster />
       </div>

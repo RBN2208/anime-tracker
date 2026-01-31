@@ -18,5 +18,4 @@ export interface CalendarEvent {
   season: number;               // Staffel
   title?: string;               // Anime-Titel
   sourceUrl?: string;           // URL zur Quelle
-  watched?: boolean;            // Angesehen Status
 }
