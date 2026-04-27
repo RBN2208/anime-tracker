@@ -60,7 +60,7 @@ export const CalendarDay = React.memo(function CalendarDay({
       </div>
 
       <div className="space-y-1">
-        {events.slice(0, 3).map((event, index) => (
+        {events.map((event, index) => (
           <div
             key={event.id}
             className={cn(
@@ -84,18 +84,6 @@ export const CalendarDay = React.memo(function CalendarDay({
             )}
           </div>
         ))}
-
-        {events.length > 3 && (
-          <Badge 
-            variant="outline" 
-            className={cn(
-              "text-xs w-full justify-center transition-all duration-200",
-              isHovered && "bg-accent"
-            )}
-          >
-            +{events.length - 3} mehr
-          </Badge>
-        )}
 
         {events.length === 0 && isCurrentMonth && !isPast && (
           <p className="text-xs text-muted-foreground/50 text-center py-2">
